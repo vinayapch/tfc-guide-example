@@ -1,31 +1,21 @@
-# Copyright (c) HashiCorp, Inc.
-# SPDX-License-Identifier: MPL-2.0
-
-provider "aws" {
-  region = var.region
+# 1. Define the Providers
+terraform {
+  required_providers {
+    newrelic = {
+      source  = "newrelic/newrelic"
+    }
+    grafana = {
+      source  = "grafana/grafana"
+    }
+  }
 }
 
-data "aws_ami" "ubuntu" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["099720109477"] # Canonical
+# 2. Create a New Relic Alert Policy
+resource "newrelic_alert_policy" "tf_policy" {
+  name = "My First Vin Terraform Policy"
 }
 
-resource "aws_instance" "ubuntu" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = var.instance_type
-
-  tags = {
-    Name = var.instance_name
-  }
+# 3. Create a Grafana Folder
+resource "grafana_folder" "tf_folder" {
+  title = "Managed by Terraform from vin"
 }
